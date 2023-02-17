@@ -1,0 +1,13 @@
+apiVersion: appmesh.k8s.aws/v1beta2
+kind: Mesh
+metadata:
+  name: {{ $.Values.namespace }}
+  namespace: {{ $.Values.namespace }}
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    meta.helm.sh/release-name: appmesh-test
+    meta.helm.sh/release-namespace: default
+spec:
+  namespaceSelector:
+    matchLabels:
+      mesh: {{ $.Values.namespace }}

@@ -1,0 +1,14 @@
+{{- if .Values.appMesh.enabled -}}
+apiVersion: appmesh.k8s.aws/v1beta2
+kind: VirtualService
+metadata:
+  name: {{ $.Values.phase }}-{{ $.Values.projectName }}
+  labels:
+    app: {{ $.Values.phase }}-{{ $.Values.projectName }}
+spec:
+  awsName: {{ $.Values.phase }}-{{ $.Values.projectName }}.{{ .Release.Namespace }}.svc.cluster.local
+  provider:
+    virtualNode:
+      virtualNodeRef:
+        name: {{ $.Values.phase }}-{{ $.Values.projectName }}
+{{- end }}

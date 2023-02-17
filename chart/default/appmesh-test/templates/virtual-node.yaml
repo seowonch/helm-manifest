@@ -1,0 +1,28 @@
+{{- if .Values.appMesh.enabled -}}
+apiVersion: appmesh.k8s.aws/v1beta2
+kind: VirtualNode
+metadata:
+  name: {{ $.Values.phase }}-{{ $.Values.projectName }}
+  labels:
+    app: {{ $.Values.phase }}-{{ $.Values.projectName }}
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ $.Values.phase }}-{{ $.Values.projectName }}
+  listeners:
+  - portMapping:
+      port: {{ .Values.deployment.containerPort }}
+      protocol: http  
+    {{- if .Values.appMesh.backendVirtualServices }}
+    {{ toYaml .Values.appMesh.healthCheck }}
+    {{- end }}
+  backends:
+    {{- range $key, $value := .Values.backend.envAddresses }}
+    - virtualService:
+        virtualServiceRef:
+          name: {{ $value }}
+    {{- end }}
+  serviceDiscovery:
+    dns:
+      hostname: {{ $.Values.phase }}-{{ $.Values.projectName }}.{{ .Release.Namespace }}.svc.cluster.local
+{{- end }}
